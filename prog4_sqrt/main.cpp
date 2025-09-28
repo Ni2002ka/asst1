@@ -35,6 +35,12 @@ int main() {
         
         // starter code populates array with random input values
         values[i] = .001f + 2.998f * static_cast<float>(rand()) / RAND_MAX;
+        
+        // Best-case speedup
+        // values[i] = 2.9999f;
+
+        // Worst-case speedup
+        // values[i] = (i % 8 == 0) ? 2.9999f : 1.0f;
     }
 
     // generate a gold version to check results
