@@ -249,7 +249,48 @@ void clampedExpVector(float* values, int* exponents, float* output, int N) {
   // Your solution should work for any value of
   // N and VECTOR_WIDTH, not just when VECTOR_WIDTH divides N
   //
-  
+
+  __cs149_vec_float x;
+  __cs149_vec_int y;
+  __cs149_vec_float result = _cs149_vset_float(1.f);
+  // zero mask: Compare exponents to zero
+  // apply_clamp: Track elements hitting the max
+  // within_bounds: Handles cases where N is not a multiple of vector width
+  __cs149_mask zero_mask, apply_clamp, within_bounds;
+
+  __cs149_vec_int zeros = _cs149_vset_int(0); // Array of all zeros
+  __cs149_vec_int ones = _cs149_vset_int(1); // Array of all ones
+  __cs149_vec_float max_val = _cs149_vset_float(9.999999f);
+
+  __cs149_mask true_mask = _cs149_init_ones(VECTOR_WIDTH); // All true mask
+
+  for (int i=0; i<N; i+=VECTOR_WIDTH) {
+    if (i+VECTOR_WIDTH < N)
+      within_bounds = _cs149_init_ones(VECTOR_WIDTH);
+    else 
+      within_bounds = _cs149_init_ones(N - i);
+
+    _cs149_vload_float(x, values+i, true_mask); 
+    _cs149_vload_int(y, exponents+i, true_mask);
+    result = _cs149_vset_float(1.f);
+
+    _cs149_veq_int(zero_mask, zeros, y, true_mask);
+
+    while (_cs149_cntbits(zero_mask) < VECTOR_WIDTH){
+      __cs149_mask non_zero_mask = _cs149_mask_not(zero_mask);
+      _cs149_vmult_float(result, result, x, non_zero_mask);
+      _cs149_vsub_int(y, y, ones, non_zero_mask);
+
+      _cs149_veq_int(zero_mask, zeros, y, true_mask);
+    }
+
+    // Clamp elements if needed
+    _cs149_vgt_float(apply_clamp, result, max_val, true_mask);
+    _cs149_vmove_float(result, max_val, apply_clamp);
+
+    // Write results to output 
+    _cs149_vstore_float(output+i, result, within_bounds);
+  }
 }
 
 // returns the sum of all elements in values
