@@ -44,7 +44,7 @@ void workerThreadStart(WorkerArgs * const args) {
     // if (args->threadId == args->numThreads - 1){
     //     numRows = args->height - startRow;
     // }
-    // mandelbrotSerial(args->x0, args->y0, args->x1, args->y1, args->width, args->height, startRow, numRows, args->maxIterations, args->output);
+    // mandelbrotSerial(args->x0, args->y0, args->x1, args->y1, args->width, args->height, startRow, numRows, 1, args->maxIterations, args->output);
     mandelbrotSerial(args->x0, args->y0, args->x1, args->y1, args->width, args->height, args->threadId, args->height, args->numThreads, args->maxIterations, args->output);
 
     double endTime = CycleTimer::currentSeconds();
