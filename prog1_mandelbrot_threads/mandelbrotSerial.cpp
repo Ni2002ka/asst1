@@ -70,7 +70,7 @@ static inline int mandel(float c_re, float c_im, int count)
 void mandelbrotSerial(
     float x0, float y0, float x1, float y1,
     int width, int height,
-    int startRow, int totalRows,
+    int startRow, int totalRows, int step,
     int maxIterations,
     int output[])
 {
@@ -79,7 +79,7 @@ void mandelbrotSerial(
 
     int endRow = startRow + totalRows;
 
-    for (int j = startRow; j < endRow; j++) {
+    for (int j = startRow; j < endRow; j+=step) {
         for (int i = 0; i < width; ++i) {
             float x = x0 + i * dx;
             float y = y0 + j * dy;
